@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {AngularFireAuth} from "@angular/fire/compat/auth";
+import {AngularFirestore} from "@angular/fire/compat/firestore";
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,9 @@ export class RegisterComponent {
   alertColour: string = 'blue';
   inSubmission: boolean = false;
 
-  constructor(private auth: AngularFireAuth) {
+  constructor(
+    private auth: AngularFireAuth,
+    private db: AngularFirestore) {
   }
 
   registerForm = new FormGroup({
@@ -50,13 +53,18 @@ export class RegisterComponent {
     this.alertMsg = 'Please wait! Your account is being created.';
     this.alertColour = 'blue';
 
-    const { email, password } = this.registerForm.value;
+    const { name, email, age, password, phoneNumber } = this.registerForm.value;
 
     try {
       const userCred = await this.auth.createUserWithEmailAndPassword(
         email as string, password as string
       );
-      console.log(userCred);
+      await this.db.collection('users').add({
+        name,
+        email,
+        age,
+        phoneNumber,
+      })
     } catch(e) {
       console.error(e);
       this.alertMsg = 'An unexpected error occurred. Please try again later.';
