@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {AngularFireStorage} from "@angular/fire/compat/storage";
 import { v4 as uuid } from 'uuid';
+import {last} from 'rxjs/operators';
 
 @Component({
   selector: 'app-upload',
@@ -12,6 +13,13 @@ export class UploadComponent implements OnInit {
   isDragover: boolean = false;
   file: File | null = null;
   isVideoDropped: boolean = false;
+  showAlert: boolean = false;
+  alertColour: string = 'blue';
+  alertMsg: string = 'Please wait! Your clip is being uploaded.';
+  inSubmission: boolean = false;
+  percentage: number = 0;
+  showPercentage: boolean = false;
+
   title = new FormControl('', {
     validators: [
       Validators.required,
@@ -40,10 +48,36 @@ export class UploadComponent implements OnInit {
   }
 
   uploadFile() {
+    this.showAlert = true;
+    this.alertColour = 'blue';
+    this.alertMsg = 'Please wait! Your clip is being uploaded.';
+    this.inSubmission = true;
+    this.showPercentage = true;
+
     const clipFileName = uuid();
     const clipPath = `clips/${clipFileName}.mp4`;
 
-    this.storage.upload(clipPath, this.file);
+    const task = this.storage.upload(clipPath, this.file);
+    task.percentageChanges().subscribe((progress) => {
+      this.percentage = progress as number / 100;
+    });
+
+    task.snapshotChanges().pipe(
+      last()
+    ).subscribe({
+      next: (snapshot) => {
+        this.alertColour = 'green';
+        this.alertMsg = 'Success! Your clip is now ready to share with the world.';
+        this.showPercentage = false;
+      },
+      error: (error) => {
+        this.alertColour = 'red';
+        this.alertMsg = 'Upload failed! Please try again later.';
+        this.showPercentage = false;
+        this.inSubmission = true;
+        console.error(error);
+      }
+    });
   }
 
 }
