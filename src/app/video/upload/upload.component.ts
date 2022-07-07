@@ -34,6 +34,10 @@ export class UploadComponent implements OnDestroy {
     nonNullable: true
   });
 
+  videoForm: FormGroup = new FormGroup({
+    title: this.title
+  })
+
   constructor(
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
@@ -45,10 +49,6 @@ export class UploadComponent implements OnDestroy {
   ngOnDestroy(): void {
       this.task?.cancel();
     }
-
-  videoForm: FormGroup = new FormGroup({
-    title: this.title
-  })
 
   storeFile($event: Event) {
 
