@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import {last, switchMap} from 'rxjs/operators';
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import firebase from 'firebase/compat/app';
-import {ClipService} from "../../services/clip.service";
+import {ClipService} from "src/app/services/clip.service";
 import {Router} from '@angular/router';
 
 @Component({
@@ -34,21 +34,21 @@ export class UploadComponent implements OnDestroy {
     nonNullable: true
   });
 
+  videoForm: FormGroup = new FormGroup({
+    title: this.title
+  })
+
   constructor(
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
     private clipsService: ClipService,
-    private router: Router) {
+    private router: Router,) {
     auth.user.subscribe(user => this.user = user);
   }
 
   ngOnDestroy(): void {
       this.task?.cancel();
     }
-
-  videoForm: FormGroup = new FormGroup({
-    title: this.title
-  })
 
   storeFile($event: Event) {
 
