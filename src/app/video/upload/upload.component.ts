@@ -27,6 +27,7 @@ export class UploadComponent implements OnDestroy {
   user: firebase.User | null = null;
   task?: AngularFireUploadTask;
   screenshots: Array<string> = [];
+  selectedScreenshot: string = '';
 
   title = new FormControl('', {
     validators: [
@@ -55,8 +56,11 @@ export class UploadComponent implements OnDestroy {
     }
 
   async storeFile($event: Event) {
-    this.isDragover = false;
+    if (this.ffmpegService.isRunning) {
+      return;
+    }
 
+    this.isDragover = false;
     this.file = ($event as DragEvent).dataTransfer ?
       ($event as DragEvent).dataTransfer?.files.item(0) ?? null :
       ($event.target as HTMLInputElement).files?.item(0) ?? null;
@@ -65,6 +69,8 @@ export class UploadComponent implements OnDestroy {
       return;
     }
     this.screenshots = await this.ffmpegService.getScreenshots(this.file);
+
+    this.selectedScreenshot = this.screenshots[0];
 
     this.title.setValue(this.file.name.replace(/\.[^/.]+$/, ''));
     this.isVideoDropped = true;
