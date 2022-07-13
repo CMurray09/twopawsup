@@ -26,6 +26,7 @@ export class UploadComponent implements OnDestroy {
   showPercentage: boolean = false;
   user: firebase.User | null = null;
   task?: AngularFireUploadTask;
+  screenshots: Array<string> = [];
 
   title = new FormControl('', {
     validators: [
@@ -63,7 +64,7 @@ export class UploadComponent implements OnDestroy {
     if (!this.file || this.file.type !== 'video/mp4') {
       return;
     }
-    await this.ffmpegService.getScreenshots(this.file);
+    this.screenshots = await this.ffmpegService.getScreenshots(this.file);
 
     this.title.setValue(this.file.name.replace(/\.[^/.]+$/, ''));
     this.isVideoDropped = true;
