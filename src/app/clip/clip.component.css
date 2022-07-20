@@ -11,6 +11,8 @@
 
 .video-js {
   position: initial;
+  height: 0px;
+  width: 0px;
 }
 
 .video-js .vjs-control-bar {
