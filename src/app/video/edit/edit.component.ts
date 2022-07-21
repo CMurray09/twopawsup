@@ -3,6 +3,7 @@ import {ModalService} from "src/app/services/modal.service";
 import IClip from "src/app/models/clip.model";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ClipService} from "src/app/services/clip.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: 'app-edit',
@@ -34,7 +35,7 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy {
     id: this.clipID
   })
 
-  constructor(private modal: ModalService, private clipService: ClipService) { }
+  constructor(private modal: ModalService, private clipService: ClipService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.modal.register('editClip');
@@ -58,6 +59,14 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.activeClip) {
       return;
     }
+
+    if (this.title.value === this.activeClip.title) {
+      this.showAlert = true;
+      this.alertColour = 'blue';
+      this.alertMsg = 'Title has not been changed. Nothing to save.';
+      return;
+    }
+
     this.inSubmission = true;
     this.showAlert = true;
     this.alertColour = 'blue';
@@ -75,7 +84,11 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy {
     this.activeClip.title = this.title.value;
     this.update.emit(this.activeClip);
     this.inSubmission = false;
-    this.alertColour = 'green';
-    this.alertMsg = 'Success!';
+    this.showSuccess();
+    this.modal.toggleModal('editClip');
+  }
+
+  showSuccess() {
+    this.toastr.success(`New clip title: ${this.title.value}`, 'Clip successfully updated!');
   }
 }
