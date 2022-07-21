@@ -37,10 +37,10 @@
 
       <!-- Actions -->
       <div class="flex text-center text-2xl bg-gray-800 p-2 mt-auto">
-        <a (click)="openModal($event, clip)" href="#" class="flex-1 p-2 border-right border-r-2 border-gray-700 transition hover:text-indigo-400">
+        <a (click)="openEditModal($event, clip)" href="#" class="flex-1 p-2 border-right border-r-2 border-gray-700 transition hover:text-indigo-400">
           <span class="material-icons text-base">build</span>
         </a>
-        <a (click)="deleteClip($event, clip)" href="#" class="flex-1 p-2 rounded-br-2xl transition hover:text-indigo-400">
+        <a (click)="openDeleteModal($event, clip)" href="#" class="flex-1 p-2 border-right border-r-2 border-gray-700 transition hover:text-indigo-400">
           <span class="material-icons text-base">delete</span>
         </a>
       </div>
@@ -50,3 +50,4 @@
 </div>
 
 <app-edit [activeClip]="activeClip" (update)="update($event)"></app-edit>
+<app-delete [activeClip]="activeClip" (updateVideoList)="removeDeletedClip($event)"></app-delete>
