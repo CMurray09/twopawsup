@@ -16,6 +16,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import {AngularFireStorageModule} from "@angular/fire/compat/storage";
 import { ClipsListComponent } from './clips-list/clips-list.component';
 import { FbTimestampPipe } from './pipes/fb-timestamp.pipe';
+import { ToastrModule } from "ngx-toastr";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -35,7 +37,12 @@ import { FbTimestampPipe } from './pipes/fb-timestamp.pipe';
     AngularFireAuthModule,
     AngularFirestoreModule,
     AppRoutingModule,
-    AngularFireStorageModule
+    AngularFireStorageModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-center',
+      preventDuplicates: true
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
