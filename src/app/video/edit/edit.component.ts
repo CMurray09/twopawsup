@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  OnChanges,
+  Output,
+  EventEmitter,
+  AfterContentChecked} from '@angular/core';
 import {ModalService} from "src/app/services/modal.service";
 import IClip from "src/app/models/clip.model";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -10,7 +18,7 @@ import { ToastrService } from "ngx-toastr";
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.css']
 })
-export class EditComponent implements OnInit, OnChanges, OnDestroy {
+export class EditComponent implements OnInit, OnChanges, OnDestroy, AfterContentChecked {
   @Input() activeClip: IClip | null = null;
   @Output() update = new EventEmitter();
   inSubmission = false;
@@ -35,7 +43,11 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy {
     id: this.clipID
   })
 
-  constructor(private modal: ModalService, private clipService: ClipService, private toastr: ToastrService) { }
+  constructor(
+    private modal: ModalService,
+    private clipService: ClipService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     this.modal.register('editClip');
@@ -43,6 +55,12 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.modal.unregister('editClip');
+  }
+
+  ngAfterContentChecked(): void {
+    if (!this.modal.isModalOpen('editClip')) {
+      this.showAlert = false;
+    }
   }
 
   ngOnChanges(): void {
