@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output} fr
 import { ModalService } from 'src/app/services/modal.service';
 import IClip from "src/app/models/clip.model";
 import {ClipService} from "src/app/services/clip.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: 'app-delete',
@@ -18,7 +19,10 @@ export class DeleteComponent implements OnInit, OnDestroy, OnChanges {
   alertColour: string = 'blue';
   videoTitle: string = '';
 
-  constructor(private modal: ModalService, private clipService: ClipService) { }
+  constructor(
+    private modal: ModalService,
+    private clipService: ClipService,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.modal.register('deleteClip');
@@ -42,7 +46,6 @@ export class DeleteComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
     this.inSubmission = true;
-    this.showAlert = true;
     try {
       this.clipService.deleteClip(this.activeClip);
     } catch (e) {
@@ -52,9 +55,14 @@ export class DeleteComponent implements OnInit, OnDestroy, OnChanges {
       console.error(e);
       return;
     }
+    this.showAlert = false;
     this.updateVideoList.emit($event);
     this.inSubmission = false;
-    this.alertColour = 'green';
-    this.alertMsg = 'Video Deleted!';
+    this.modal.toggleModal('deleteClip');
+    this.showSuccess();
+  }
+
+  showSuccess() {
+    this.toastr.success(this.videoTitle, 'Video Successfully Deleted!');
   }
 }
