@@ -34,7 +34,8 @@ export class UploadComponent implements OnDestroy {
   title = new FormControl('', {
     validators: [
       Validators.required,
-      Validators.minLength(3)
+      Validators.minLength(3),
+      Validators.maxLength(50)
     ],
     nonNullable: true
   });

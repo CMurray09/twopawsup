@@ -33,7 +33,8 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy, AfterContent
   title = new FormControl('', {
     validators: [
       Validators.required,
-      Validators.minLength(3)
+      Validators.minLength(3),
+      Validators.maxLength(50)
     ],
     nonNullable: true
   });
@@ -104,6 +105,11 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy, AfterContent
     this.inSubmission = false;
     this.showSuccess();
     this.modal.toggleModal('editClip');
+  }
+
+  resetTitle($event: Event) {
+    $event.preventDefault();
+    this.title.setValue(this.activeClip!.title);
   }
 
   showSuccess() {

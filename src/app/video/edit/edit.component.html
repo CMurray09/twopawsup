@@ -11,7 +11,14 @@
     <!-- Title -->
     <div class="mt-4">
       <label class="block text-xl mb-4">Title</label>
-      <app-input [control]="title" placeholder="Enter Title"></app-input>
+      <div class="grid grid-rows-1 grid-flow-col gap-4">
+        <app-input [control]="title" placeholder="Enter Title" class="col-span-12"></app-input>
+        <div id="resetButton" class="text-center text-2xl p-2 mt-auto">
+          <a (click)="resetTitle($event)" href="#" class="flex-1 p-2 transition hover:text-indigo-400">
+            <span class="material-icons text-base">undo</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <div class="mt-4 text-right">
