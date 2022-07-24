@@ -15,7 +15,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     document.body.appendChild(this.el.nativeElement);
   }
 
-  closeModal() {
+  closeModal(): void {
     this.modal.toggleModal(this.modalID);
   }
 

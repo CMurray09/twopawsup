@@ -46,7 +46,7 @@ export class RegisterComponent {
     ])
   }, [RegisterValidators.match('password', 'confirm_password')]);
 
-  async register() {
+  async register(): Promise<void> {
     this.inSubmission = true;
     this.showAlert = true;
     this.alertMsg = 'Please wait! Your account is being created.';
