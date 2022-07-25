@@ -18,7 +18,7 @@ export class ModalService {
   }
 
   toggleModal(id: string) {
-    const modal = this.modals.find(element => element.id === id);
+    const modal: IModal | undefined = this.modals.find(element => element.id === id);
 
     if (modal) {
       modal.visible = !modal.visible;

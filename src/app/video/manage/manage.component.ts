@@ -32,7 +32,7 @@ export class ManageComponent implements OnInit {
 
     this.clipService.getUserClips(this.sort$).subscribe(docs => {
       this.clips = [];
-      docs.forEach(doc => {
+      docs?.forEach(doc => {
         this.clips.push({
           docID: doc.id,
           ...doc.data()
@@ -41,8 +41,8 @@ export class ManageComponent implements OnInit {
     });
   }
 
-  sort(event: Event) {
-    const { value } = (event.target as HTMLSelectElement);
+  sort(event: Event): void {
+    const { value }: HTMLSelectElement = (event.target as HTMLSelectElement);
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
@@ -51,19 +51,19 @@ export class ManageComponent implements OnInit {
     });
   }
 
-  openEditModal($event: Event, clip: IClip) {
+  openEditModal($event: Event, clip: IClip): void {
     $event.preventDefault();
     this.activeClip = clip;
     this.modal.toggleModal('editClip');
   }
 
-  openDeleteModal($event: Event, clip: IClip) {
+  openDeleteModal($event: Event, clip: IClip): void {
     $event.preventDefault();
     this.activeClip = clip;
     this.modal.toggleModal('deleteClip');
   }
 
-  update($event: IClip) {
+  update($event: IClip): void {
     this.clips.forEach((element, index) => {
       if (element.docID == $event.docID) {
         this.clips[index].title = $event.title;
@@ -71,7 +71,7 @@ export class ManageComponent implements OnInit {
     })
   }
 
-  removeDeletedClip($event: Event) {
+  removeDeletedClip($event: Event): void {
     $event.preventDefault();
     this.clips.forEach((element, index) => {
       if (element.docID == this.activeClip!.docID) {
@@ -80,13 +80,13 @@ export class ManageComponent implements OnInit {
     })
   }
 
-  async copyToClipboard($event: MouseEvent, docID: string | undefined) {
+  async copyToClipboard($event: MouseEvent, docID: string | undefined): Promise<void> {
     $event.preventDefault();
     if (!docID) {
       return;
     }
 
-    const url = `${location.origin}/clip/${docID}`;
+    const url: string = `${location.origin}/clip/${docID}`;
     await navigator.clipboard.writeText(url);
 
     alert('Link Copied!');

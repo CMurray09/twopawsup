@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
-  DocumentReference, QuerySnapshot
+  DocumentReference, QueryDocumentSnapshot, QuerySnapshot
 }
   from "@angular/fire/compat/firestore";
 import IClip from "src/app/models/clip.model";
 import {AngularFireAuth} from '@angular/fire/compat/auth';
 import {switchMap, map} from 'rxjs/operators';
 import {of, BehaviorSubject, combineLatest, lastValueFrom, Observable} from 'rxjs';
-import {AngularFireStorage} from "@angular/fire/compat/storage";
+import {AngularFireStorage, AngularFireStorageReference} from "@angular/fire/compat/storage";
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot, Router} from "@angular/router";
+import firebase from "firebase/compat/app";
 
 @Injectable({
   providedIn: 'root'
@@ -32,18 +33,19 @@ export class ClipService implements Resolve<IClip | null> {
     return this.clipsCollection.add(data);
   }
 
-  getUserClips(sort$: BehaviorSubject<string>) {
+  getUserClips(sort$: BehaviorSubject<string>): Observable<QueryDocumentSnapshot<IClip>[]> {
     return combineLatest([
       this.auth.user,
       sort$
     ]).pipe(
       switchMap(values => {
-        const [user, sort] = values;
+        const [user, sort]: [user: firebase.User | null, sort: string] = values;
         if (!user) {
           return of([])
         }
 
-        const query = this.clipsCollection.ref.where(
+        const query: firebase.firestore.Query<IClip> =
+          this.clipsCollection.ref.where(
           'uid', '==', user.uid
         ).orderBy('timestamp', sort === '1' ? 'desc' : 'asc');
 
@@ -53,15 +55,15 @@ export class ClipService implements Resolve<IClip | null> {
     )
   }
 
-  updateClip(id: string, title: string) {
+  updateClip(id: string, title: string): Promise<void>{
     return this.clipsCollection.doc(id).update({
       title
     });
   }
 
-  async deleteClip(clip: IClip) {
-    const clipRef = this.storage.ref(`clips/${clip.fileName}`);
-    const screenshotRef = this.storage.ref(
+  async deleteClip(clip: IClip): Promise<void> {
+    const clipRef: AngularFireStorageReference = this.storage.ref(`clips/${clip.fileName}`);
+    const screenshotRef: AngularFireStorageReference = this.storage.ref(
       `screenshots/${clip.screenshotFileName}`
     );
 
@@ -70,22 +72,26 @@ export class ClipService implements Resolve<IClip | null> {
     await this.clipsCollection.doc(clip.docID).delete();
   }
 
-  async getClips() {
+  async getClips(): Promise<void> {
     if (this.pendingReq) {
       return;
     }
     this.pendingReq = true;
-    let query = this.clipsCollection.ref.orderBy('timestamp', 'desc').limit(6);
-    const { length } = this.pageClips;
+    let query: firebase.firestore.Query<IClip> =
+      this.clipsCollection.ref.orderBy('timestamp', 'desc').limit(6);
+    const { length }: IClip[] = this.pageClips;
 
     if (length) {
-      const lastDocID = this.pageClips[length - 1].docID;
-      const clipDoc = await this.clipsCollection.doc(lastDocID).get();
-      const lastDoc = await lastValueFrom(clipDoc);
+      const lastDocID: string | undefined = this.pageClips[length - 1].docID;
+      const clipDoc: Observable<firebase.firestore.DocumentSnapshot<IClip>> =
+        await this.clipsCollection.doc(lastDocID).get();
+      const lastDoc: firebase.firestore.DocumentSnapshot<IClip> =
+        await lastValueFrom(clipDoc);
 
       query = query.startAfter(lastDoc);
     }
-    const snapshot = await query.get();
+    const snapshot: firebase.firestore.QuerySnapshot<IClip> =
+      await query.get();
 
     snapshot.forEach(doc => {
       this.pageClips.push({
@@ -102,7 +108,7 @@ export class ClipService implements Resolve<IClip | null> {
       .get()
       .pipe(
         map(snapshot => {
-          const data = snapshot.data();
+          const data: IClip | undefined = snapshot.data();
           if (!data) {
             this.router.navigate(['/']);
             return null;

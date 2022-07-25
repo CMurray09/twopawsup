@@ -21,17 +21,17 @@ export class ClipsListComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.scrollable) {
       window.removeEventListener('scroll', this.handleScroll);
     }
     this.clipService.pageClips = [];
   }
 
-  handleScroll = () => {
-    const {scrollTop, offsetHeight} = document.documentElement;
-    const { innerHeight } = window;
-    const bottomOfWindow = Math.round(scrollTop) + innerHeight === offsetHeight;
+  handleScroll = (): void => {
+    const {scrollTop, offsetHeight}: {scrollTop: number, offsetHeight: number} = document.documentElement;
+    const { innerHeight }: Window = window;
+    const bottomOfWindow: boolean = Math.round(scrollTop) + innerHeight === offsetHeight;
 
     if (bottomOfWindow) {
       this.clipService.getClips();

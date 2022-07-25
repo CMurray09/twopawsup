@@ -5,15 +5,16 @@ import IUser from "src/app/models/user.model";
 import {Observable, of} from "rxjs";
 import {map, delay, filter, switchMap} from 'rxjs/operators';
 import {ActivatedRoute, Router, NavigationEnd} from "@angular/router";
+import firebase from "firebase/compat/app";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private usersCollection: AngularFirestoreCollection<IUser>;
+  private redirect: boolean = false;
   public isAuthenticated$: Observable<boolean>;
   public isAuthenticatedWithDelay$: Observable<boolean>;
-  private redirect: boolean = false;
 
   constructor(
     private auth: AngularFireAuth,
@@ -36,11 +37,11 @@ export class AuthService {
     });
   }
 
-  public async createUser(userData: IUser) {
+  public async createUser(userData: IUser): Promise<void> {
     if (!userData.password) {
       throw new Error('Password is not provided');
     }
-    const userCred = await this.auth.createUserWithEmailAndPassword(
+    const userCred: firebase.auth.UserCredential = await this.auth.createUserWithEmailAndPassword(
       userData.email as string, userData.password as string
     );
 
@@ -57,7 +58,7 @@ export class AuthService {
     await userCred.user.updateProfile({ displayName: userData.name })
   }
 
-  public async logout($event?: Event) {
+  public async logout($event?: Event): Promise<void> {
     if ($event) {
       $event.preventDefault();
     }

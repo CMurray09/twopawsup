@@ -58,7 +58,7 @@ export class DeleteComponent implements OnInit, OnDestroy, OnChanges, AfterConte
     this.showAlert = false;
   }
 
-  deleteClip($event: Event) {
+  deleteClip($event: Event): void {
     $event.preventDefault();
     if (!this.activeClip) {
       return;
@@ -80,7 +80,7 @@ export class DeleteComponent implements OnInit, OnDestroy, OnChanges, AfterConte
     this.showSuccess();
   }
 
-  showSuccess() {
+  showSuccess(): void {
     this.toastr.success(this.videoTitle, 'Video Successfully Deleted!');
   }
 }

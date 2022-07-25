@@ -7,7 +7,7 @@ import {AngularFireAuth} from '@angular/fire/compat/auth';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  credentials = {
+  credentials: {email: string, password: string} = {
     email: '',
     password: ''
   }
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  async login() {
+  async login(): Promise<void> {
     this.inSubmission = true;
     this.showAlert = true;
     this.alertMsg = 'Please wait! We are logging you in.';

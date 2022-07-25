@@ -12,7 +12,7 @@ export class TabsContainerComponent implements AfterContentInit {
   constructor() { }
 
   ngAfterContentInit(): void {
-    const activeTabs = this.tabs?.filter(
+    const activeTabs: TabComponent[] = this.tabs?.filter(
       tab => tab.active
     );
 
@@ -21,7 +21,7 @@ export class TabsContainerComponent implements AfterContentInit {
     }
   }
 
-  selectTab(tab: TabComponent) {
+  selectTab(tab: TabComponent): boolean {
     this.tabs?.forEach(tab => {
       tab.active = false;
     })

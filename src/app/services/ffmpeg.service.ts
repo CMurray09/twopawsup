@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import {createFFmpeg, fetchFile, FFmpeg} from '@ffmpeg/ffmpeg';
 
 @Injectable({
   providedIn: 'root'
@@ -7,13 +7,13 @@ import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 export class FfmpegService {
   isRunning: boolean = false;
   isReady: boolean = false;
-  private ffmpeg;
+  private ffmpeg: FFmpeg;
 
   constructor() {
     this.ffmpeg = createFFmpeg({ log: true });
   }
 
-  async init() {
+  async init(): Promise<void> {
     if (this.isReady) {
       return;
     }
@@ -22,12 +22,12 @@ export class FfmpegService {
     this.isReady = true;
   }
 
-  async getScreenshots(file: File) {
+  async getScreenshots(file: File): Promise<string[]> {
     this.isRunning = true;
-    const data = await fetchFile(file);
+    const data: Uint8Array = await fetchFile(file);
     this.ffmpeg.FS('writeFile', file.name, data);
 
-    const seconds = [1,2,3];
+    const seconds: Array<number> = [1,2,3];
     const commands: Array<string> = [];
     seconds.forEach(second => {
       commands.push(
@@ -48,22 +48,22 @@ export class FfmpegService {
 
     const screenshots: Array<string> = [];
     seconds.forEach(second => {
-      const screenshotFile = this.ffmpeg.FS(
+      const screenshotFile: Uint8Array = this.ffmpeg.FS(
         'readFile', `output_0${second}.png`
       )
-      const screenshotBlob = new Blob(
+      const screenshotBlob: Blob = new Blob(
         [screenshotFile.buffer], {
           type: 'image/png'
         }
       );
-      const screenshotURL = URL.createObjectURL(screenshotBlob);
+      const screenshotURL: string = URL.createObjectURL(screenshotBlob);
       screenshots.push(screenshotURL);
     });
     this.isRunning = false;
     return screenshots;
   }
 
-  async blobFromURL(url: string) {
+  async blobFromURL(url: string): Promise<Blob> {
     const response = await fetch(url);
     return await response.blob();
   }

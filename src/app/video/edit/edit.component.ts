@@ -21,10 +21,10 @@ import { ToastrService } from "ngx-toastr";
 export class EditComponent implements OnInit, OnChanges, OnDestroy, AfterContentChecked {
   @Input() activeClip: IClip | null = null;
   @Output() update = new EventEmitter();
-  inSubmission = false;
-  showAlert = false;
-  alertColour = 'blue';
-  alertMsg = 'Please wait! Updating clip.';
+  inSubmission: boolean = false;
+  showAlert: boolean = false;
+  alertColour: string = 'blue';
+  alertMsg: string = 'Please wait! Updating clip.';
 
   clipID = new FormControl('', {
     nonNullable: true
@@ -74,7 +74,7 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy, AfterContent
     this.title.setValue(this.activeClip.title);
   }
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     if (!this.activeClip) {
       return;
     }
@@ -107,12 +107,12 @@ export class EditComponent implements OnInit, OnChanges, OnDestroy, AfterContent
     this.modal.toggleModal('editClip');
   }
 
-  resetTitle($event: Event) {
+  resetTitle($event: Event): void {
     $event.preventDefault();
     this.title.setValue(this.activeClip!.title);
   }
 
-  showSuccess() {
+  showSuccess(): void {
     this.toastr.success(`New clip title: ${this.title.value}`, 'Clip successfully updated!');
   }
 }
